@@ -1,8 +1,8 @@
 ' Script "GPX Analyse"  
 ' --------------------  
 ' auteur: ledudulela  
-' version 20201116.1440 
-' màj: 16/11/2020   
+' version 20201117.1700 
+' màj: 17/11/2020   
 ' objectif: générère des statistiques à partir d'un fichier .gpx  
 ' HowTo: Copier le fichier gpx dans le répertoire du script. Lancer le script. Consulter les 3 fichiers générés.  
 ' Fichier.txt : statistiques globales (durée, vitesses, altitudes, distance)  
@@ -199,6 +199,7 @@ sub gpxAnalyse(paramFileFullPath,paramPass, paramMinElevM, paramMovingPts)
 	dim varMinDate
 	'dim varMaxDate
 	dim varRecTimerS
+	dim strRecTimerS
 	dim varTrackpoints
 	dim varDate
 	dim varStartTime
@@ -373,11 +374,12 @@ sub gpxAnalyse(paramFileFullPath,paramPass, paramMinElevM, paramMovingPts)
 		boolErrTED=false
 		boolGpxTS=false
 		if boolWithTED then
-			newGpxTS=toSystemTS("1901-12-31T00:00:00Z")
+			newGpxTS=toSystemTS("2019-12-31T08:00:00Z")
 			if xmlRows.length=xmlRowsTED.length then ' on verifie que le fichier TED contient le meme nbr de points que le fichier GPX source
 				strFileFullPath=replace(paramFileFullPath,".gpx","_TED.gpx") ' nom du nouveau fichier cible incluant les "Terrain Elevation Data"
 				if msgbox ("Voulez-vous utiliser les altitudes du fichier TED" & _
 					" et creer le fichier: " & objFSO.getFileName(strFileFullPath) & " ?",vbYesNo,TITLE)=vbYes then
+					varRecTimerS=10 ' secondes
 					for each xmlRow in xmlRows	
 						set xmlRowTED=xmlRowsTED(l) ' la meme ligne que le source
 						
@@ -397,13 +399,23 @@ sub gpxAnalyse(paramFileFullPath,paramPass, paramMinElevM, paramMovingPts)
 							'stdOut.WriteLine l & gpxEle.text & " " & gpxEleTED.text
 							
 							' *** ajoute un Time bidon si n existe pas dans le fichier source
-							varRecTimerS=10 ' secondes, valeur arbitraire mais volontairement elevee pour avoir une vitesse faible
 							set gpxTime=xmlRow.selectSingleNode("time")
 							if  gpxTime is nothing then
 								
 								if l=0 then
-									if msgbox ("Le fichier ne contient pas de donnees temporelles, voulez-vous en ajouter des fictives ?",vbYesNo,TITLE)=vbYes then
-										boolGpxTS=true
+									strRecTimerS=inputbox("Le fichier ne contient pas de donnees temporelles, voulez-vous en ajouter des fictives ?" & chr(13) & chr(10) &_
+												"Pour cela, entrez une frequence, en secondes, entre chaque point:",TITLE,varRecTimerS)
+									if strRecTimerS<>"" then
+										if isnumeric(strRecTimerS) then
+											varRecTimerS=abs(int(strRecTimerS))
+											if varRecTimerS>0 and varRecTimerS<3600 then
+												boolGpxTS=true
+											else
+												msgbox "La valeur doit etre comprise entre 1 et 3600.",,TITLE
+											end if
+										else
+											msgbox "Valeur non valide.",,TITLE
+										end if
 									end if
 								end if
 								
@@ -418,32 +430,32 @@ sub gpxAnalyse(paramFileFullPath,paramPass, paramMinElevM, paramMovingPts)
 									
 									' ci-dessous ça marchait mais je pense inutile
 									'
-'									' *** ajoute une vitesse fictive si n existe pas dans le fichier source 
-'									set gpxExtensions=xmlRow.selectSingleNode("extensions")
-'									if  gpxExtensions is nothing then
-'										set gpxExtensions = xmlDOMSource.createElement("extensions")
-'										set gpxSpeed = xmlDOMSource.createElement("speed")
-'										segDistanceM=0
-'										segHeightM=0
-'										if l>0 then
-'											' calcul de vitesse par rapport au point précédent
-'											set xmlPreviousRow=xmlRows(l-1)
-'											segHeightM=cDouble(xmlRow.selectSingleNode("ele").text) - cDouble(xmlPreviousRow.selectSingleNode("ele").text)
-'											segDistanceM=distance2ptsM( _
-'												xmlRow.attributes.getNamedItem("lat").value, _
-'												xmlRow.attributes.getNamedItem("lon").value, _
-'												xmlPreviousRow.attributes.getNamedItem("lat").value, _
-'												xmlPreviousRow.attributes.getNamedItem("lon").value, _
-'												segHeightM)
-'											ptSpeedMS=Dot(RoundDown(segDistanceM/varRecTimerS,1)) ' distance / temps
-'											'stdOut.writeLine l & " " & ptSpeedMS & "m/s"
-'										else
-'											ptSpeedMS="0.0"
-'										end if
-'										gpxSpeed.text=ptSpeedMS
-'										gpxExtensions.appendChild(gpxSpeed)
-'										xmlRow.appendChild(gpxExtensions)
-'									end if
+									' *** ajoute une vitesse fictive si n existe pas dans le fichier source 
+									set gpxExtensions=xmlRow.selectSingleNode("extensions")
+									if  gpxExtensions is nothing then
+										set gpxExtensions = xmlDOMSource.createElement("extensions")
+										set gpxSpeed = xmlDOMSource.createElement("speed")
+										segDistanceM=0
+										segHeightM=0
+										if l>0 then
+											' calcul de vitesse par rapport au point précédent
+											set xmlPreviousRow=xmlRows(l-1)
+											segHeightM=cDouble(xmlRow.selectSingleNode("ele").text) - cDouble(xmlPreviousRow.selectSingleNode("ele").text)
+											segDistanceM=distance2ptsM( _
+												xmlRow.attributes.getNamedItem("lat").value, _
+												xmlRow.attributes.getNamedItem("lon").value, _
+												xmlPreviousRow.attributes.getNamedItem("lat").value, _
+												xmlPreviousRow.attributes.getNamedItem("lon").value, _
+												segHeightM)
+											ptSpeedMS=Dot(RoundDown(segDistanceM/varRecTimerS,1)) ' distance / temps
+											'stdOut.writeLine l & " " & ptSpeedMS & "m/s"
+										else
+											ptSpeedMS="0.0"
+										end if
+										gpxSpeed.text=ptSpeedMS
+										gpxExtensions.appendChild(gpxSpeed)
+										xmlRow.appendChild(gpxExtensions)
+									end if
 								end if
 							end if
 						else
@@ -564,10 +576,12 @@ sub gpxAnalyse(paramFileFullPath,paramPass, paramMinElevM, paramMovingPts)
 				end if
 				
 				' mémorise la Vitesse Max
+				' attention, la vitesse maxi peut etre fausse si le GPS ne capte pas sur une grande distance entre 2 points
 				if ptSpeedMS<>"" then
 					if dblSpeedMS>0 then ' moving point
 						if dblSpeedMS>varMaxSpeedMS then
 							varMaxSpeedMS=dblSpeedMS
+							'if boolDEBUG then stdOut.WriteLine l & " " & varMaxSpeedMS
 						end if
 					end if						
 				end if
@@ -746,8 +760,14 @@ sub gpxAnalyse(paramFileFullPath,paramPass, paramMinElevM, paramMovingPts)
 			end if
 		end if
 		
-		if boolWriteFile then ' normalement a la seconde passe		
-			msgbox strFileContent & CRLF & CRLF & "Les donnees ont ete sauvegardees dans les fichiers .txt .log et .csv .",,TITLE
+		if boolWriteFile then ' normalement a la seconde passe	
+			if varDate="" then
+				strRow="/!\ Le fichier GPX ne contient pas de date/heure." & CRLF & "Associez un fichier .ted pour corriger ce probleme."
+			else
+				strRow="Les donnees ont ete sauvegardees dans les fichiers .txt .log et .csv ."
+			end if
+			strFileContent= strFileContent & CRLF & CRLF & strRow
+			msgbox strFileContent,,TITLE
 		end if
 	
 	end if
