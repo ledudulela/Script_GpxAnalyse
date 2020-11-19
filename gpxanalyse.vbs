@@ -1,8 +1,9 @@
 ' Script "GPX Analyse"  
 ' --------------------  
+option explicit
+const VERSION=20201119.1305
+' màj: 18/11/2020   
 ' auteur: ledudulela  
-' version 20201117.1700 
-' màj: 17/11/2020   
 ' objectif: générère des statistiques à partir d'un fichier .gpx  
 ' HowTo: Copier le fichier gpx dans le répertoire du script. Lancer le script. Consulter les 3 fichiers générés.  
 ' Fichier.txt : statistiques globales (durée, vitesses, altitudes, distance)  
@@ -21,12 +22,13 @@
 ' - cocher Output Format = GPX  
 ' - sélectionner "Add DEM elevation data" = ODP1 - Western Europe     (ODP = https:data.opendataportal.at)  
 ' - uploader (téléverser) le fichier source GPX  
-' Renommer le fichier obtenu comme le fichier source mais en remplacant l'extension .gpx par .ted (Terrain Elevation Data)  
-' Puis placer le fichier .ted dans le même dossier que le fichier source  
-' Le script vous indiquera la présence du fichier .ted et vous proposera de l'utiliser pour effectuer ses calculs.  
-' Un nouveau fichier .gpx incluant les nouvelles données d'altitude sera alors créé si vous souhaitez utiliser les données "DEM".  
-' PS: Le fichier obtenu par gpsvisualizer/convert perd les informations de vitesse du fichier gpx source.  
-' Le script peut les fusionner pour en faire un nouveau fichier contenant les données GPX source + données d'altitudes provenant du TED  
+' Renommer le fichier obtenu, comme le fichier source, mais en remplacant l'extension .gpx par _ted.gpx (Terrain Elevation Data) 
+' Puis placer le fichier _ted.gpx dans le même répertoire que le fichier source.
+' Le fichier obtenu par gpsvisualizer/convert perd les informations de vitesse du fichier gpx source. 
+' Le script fusionne les données GPX source + données d'altitudes provenant du TED
+' Le script vous indiquera la présence du fichier _ted et vous proposera de l'utiliser pour effectuer ses calculs.
+' Dans ce cas, un nouveau fichier _ted.gpx résultant de la fusion d'avec le gpx source sera alors créé (remplacé).
+  
   
 ' exemple de statistiques générées:	 
 ' ---------------------------------  
@@ -60,7 +62,6 @@
 '  </extensions>  
 ' </trkpt>  
 ' ```
-option explicit
 const VSI_OFFSET=0 ' ajustement des plages de valeurs pour le calcul du VSI, en centimetres/sec ! exemple: VSI_OFFSET=9 pour vttiste confirmé
 const TITLE="GPX Analyse"
 dim CSV
@@ -103,7 +104,7 @@ sub main () ' choix du fichier gpx et execution de l analyse
 	i=0
 	if strFileList<>"" then
 		arrFiles=split(strFileList,CRLF)
-		strChoix=inputbox(strFileList & CRLF & "Entrez le numero du fichier:",TITLE,1) 'replace(wscript.scriptname,".vbs",".gpx")
+		strChoix=inputbox(strFileList & CRLF & "Entrez le numero du fichier:",msgtitle(),1) 'replace(wscript.scriptname,".vbs",".gpx")
 		if strChoix<>"" then
 			if isnumeric(strChoix) then
 				i=int(strChoix)-1
@@ -114,7 +115,7 @@ sub main () ' choix du fichier gpx et execution de l analyse
 			end if
 		end if
 	else
-		msgbox "Ce dossier ne contient aucun fichier .gpx .",,TITLE
+		msgbox "Ce dossier ne contient aucun fichier .gpx .",,msgtitle()
 	end if
 	
 	' lance l'analyse le fichier GPX
@@ -283,7 +284,7 @@ sub gpxAnalyse(paramFileFullPath,paramPass, paramMinElevM, paramMovingPts)
 	end if
 
 	if strFileContent="" then 
-		msgbox "Erreur de fichier source.",,TITLE
+		msgbox "Erreur de fichier source.",,msgtitle()
 	else	
 		varGpxFilename=objFSO.getFileName(paramFileFullPath)
 		boolWriteFile=(paramPass=2) ' booleen pour indiquer d ecrire dans les fichiers à la seconde passe de la fonction
@@ -295,7 +296,7 @@ sub gpxAnalyse(paramFileFullPath,paramPass, paramMinElevM, paramMovingPts)
 		' verifie la presence du fichier GPX avec DEM et le charge
 		boolWithTED=false
 		if paramPass=1 then
-			strFileFullPath=replace(paramFileFullPath,".gpx",".ted")
+			strFileFullPath=replace(paramFileFullPath,".gpx","_ted.gpx")
 			strFileContent=""
 			if objFSO.FileExists(strFileFullPath) then 
 				Set objADODB = CreateObject("ADODB.Stream") ' cet objet permet de convertir un fichier encodé en UTF8 en une chaine ANSI
@@ -376,9 +377,9 @@ sub gpxAnalyse(paramFileFullPath,paramPass, paramMinElevM, paramMovingPts)
 		if boolWithTED then
 			newGpxTS=toSystemTS("2019-12-31T08:00:00Z")
 			if xmlRows.length=xmlRowsTED.length then ' on verifie que le fichier TED contient le meme nbr de points que le fichier GPX source
-				strFileFullPath=replace(paramFileFullPath,".gpx","_TED.gpx") ' nom du nouveau fichier cible incluant les "Terrain Elevation Data"
+				strFileFullPath=replace(paramFileFullPath,".gpx","_ted.gpx") ' nom du nouveau fichier cible incluant les "Terrain Elevation Data"
 				if msgbox ("Voulez-vous utiliser les altitudes du fichier TED" & _
-					" et creer le fichier: " & objFSO.getFileName(strFileFullPath) & " ?",vbYesNo,TITLE)=vbYes then
+					" et remplacer le fichier: " & objFSO.getFileName(strFileFullPath) & " ?",vbYesNo,msgtitle())=vbYes then
 					varRecTimerS=10 ' secondes
 					for each xmlRow in xmlRows	
 						set xmlRowTED=xmlRowsTED(l) ' la meme ligne que le source
@@ -404,17 +405,17 @@ sub gpxAnalyse(paramFileFullPath,paramPass, paramMinElevM, paramMovingPts)
 								
 								if l=0 then
 									strRecTimerS=inputbox("Le fichier ne contient pas de donnees temporelles, voulez-vous en ajouter des fictives ?" & chr(13) & chr(10) &_
-												"Pour cela, entrez une frequence, en secondes, entre chaque point:",TITLE,varRecTimerS)
+												"Pour cela, entrez une frequence, en secondes, entre chaque point:",msgtitle(),varRecTimerS)
 									if strRecTimerS<>"" then
 										if isnumeric(strRecTimerS) then
 											varRecTimerS=abs(int(strRecTimerS))
 											if varRecTimerS>0 and varRecTimerS<3600 then
 												boolGpxTS=true
 											else
-												msgbox "La valeur doit etre comprise entre 1 et 3600.",,TITLE
+												msgbox "La valeur doit etre comprise entre 1 et 3600.",,msgtitle()
 											end if
 										else
-											msgbox "Valeur non valide.",,TITLE
+											msgbox "Valeur non valide.",,msgtitle()
 										end if
 									end if
 								end if
@@ -466,19 +467,19 @@ sub gpxAnalyse(paramFileFullPath,paramPass, paramMinElevM, paramMovingPts)
 					next
 					
 					if boolErrTED then ' normalement ce type d erreur ne devrait pas arriver
-						msgbox "TED: Erreur de correspondance de coordonnees au point " & l,,TITLE
+						msgbox "TED: Erreur de correspondance de coordonnees au point " & l,,msgtitle()
 					else
 						paramFileFullPath=strFileFullPath ' on memorise le chemin pour la seconde passe
 						xmlDOMSource.save paramFileFullPath ' sauvegarde le nouveau fichier gpx avec altitudes corrigees
 						if ptSpeedMS<>"" then
-							msgbox "Des donnees fictives de temps (" & varRecTimerS & " sec) ont ete ajoutees au fichier TED nouvellement cree.",,TITLE
+							msgbox "Des donnees fictives de temps (" & varRecTimerS & " sec) ont ete ajoutees au fichier TED nouvellement cree.",,msgtitle()
 						end if
 					end if
 				
 				end if
 			
 			else ' ca ne devrait pas arriver
-				msgbox "Probleme, le fichier TED ne contient pas le meme nbr de points que le fichier GPX source.",,TITLE
+				msgbox "Probleme, le fichier TED ne contient pas le meme nbr de points que le fichier GPX source.",,msgtitle()
 			end if
 		end if
 		
@@ -751,7 +752,7 @@ sub gpxAnalyse(paramFileFullPath,paramPass, paramMinElevM, paramMovingPts)
 		
 		if paramPass=1 then
 			if varTrackpoints=0 then
-				msgbox "Le fichier ne contient pas de donnees analysables.",,TITLE
+				msgbox "Le fichier ne contient pas de donnees analysables.",,msgtitle()
 			else
 				' Relance l'analyse avec cette fois-ci le MinElevation en parametre pour calculer 
 				' les hauteurs des points par rapport au MinElevation.
@@ -762,12 +763,12 @@ sub gpxAnalyse(paramFileFullPath,paramPass, paramMinElevM, paramMovingPts)
 		
 		if boolWriteFile then ' normalement a la seconde passe	
 			if varDate="" then
-				strRow="/!\ Le fichier GPX ne contient pas de date/heure." & CRLF & "Associez un fichier .ted pour corriger ce probleme."
+				strRow="/!\ Le fichier GPX ne contient pas de date/heure." & CRLF & "Associez un fichier TED pour corriger ce probleme."
 			else
 				strRow="Les donnees ont ete sauvegardees dans les fichiers .txt .log et .csv ."
 			end if
 			strFileContent= strFileContent & CRLF & CRLF & strRow
-			msgbox strFileContent,,TITLE
+			msgbox strFileContent,,msgtitle()
 		end if
 	
 	end if
@@ -776,6 +777,10 @@ end sub
 ' --------------------------------------------------------------------------------------------------------------------------------------
 ' quelques fonctions utiles
 ' --------------------------------------------------------------------------------------------------------------------------------------
+function msgtitle()
+	msgtitle=TITLE & " - version " & dot(VERSION)
+end function
+
 function dot(value) ' convertit la virgule en point 
 	dot=replace(value,",",".")
 end function
