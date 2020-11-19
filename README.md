@@ -1,6 +1,6 @@
 # Script_GpxAnalyse
 màj: 19/11/2020   
-objectif: générère des statistiques à partir d'un fichier .gpx  
+objectif: générer des statistiques à partir d'un fichier .gpx  
 HowTo: Copier le fichier gpx dans le répertoire du script. Lancer le script. Consulter les 3 fichiers générés.  
 Fichier.txt : statistiques globales (durée, vitesses, altitudes, distance)  
 Fichier.log : données gpx converties avec des unités de mesure usuelles (csv/tab)  
