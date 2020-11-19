@@ -1,5 +1,5 @@
 # Script_GpxAnalyse
-màj: 16/11/2020   
+màj: 19/11/2020   
 objectif: générère des statistiques à partir d'un fichier .gpx  
 HowTo: Copier le fichier gpx dans le répertoire du script. Lancer le script. Consulter les 3 fichiers générés.  
 Fichier.txt : statistiques globales (durée, vitesses, altitudes, distance)  
@@ -18,12 +18,13 @@ Pour cela, dans le formulaire de convertion de gpsvisualizer,
 - cocher Output Format = GPX  
 - sélectionner "Add DEM elevation data" = ODP1 - Western Europe     (ODP = https:data.opendataportal.at)  
 - uploader (téléverser) le fichier source GPX  
-Renommer le fichier obtenu comme le fichier source mais en remplacant l'extension .gpx par .ted (Terrain Elevation Data)  
-Puis placer le fichier .ted dans le même dossier que le fichier source  
-Le script vous indiquera la présence du fichier .ted et vous proposera de l'utiliser pour effectuer ses calculs.  
-Un nouveau fichier .gpx incluant les nouvelles données d'altitude sera alors créé si vous souhaitez utiliser les données "DEM".  
-PS: Le fichier obtenu par gpsvisualizer/convert perd les informations de vitesse du fichier gpx source.  
-Le script peut les fusionner pour en faire un nouveau fichier contenant les données GPX source + données d'altitudes provenant du TED  
+Renommer le fichier obtenu, comme le fichier source, mais en remplacant l'extension .gpx par _ted.gpx (Terrain Elevation Data) 
+Puis placer le fichier _ted.gpx dans le même répertoire que le fichier source.
+Le fichier obtenu par gpsvisualizer/convert perd les informations de vitesse du fichier gpx source. 
+Le script fusionne les données GPX source + données d'altitudes provenant du TED
+Le script vous indiquera la présence du fichier _ted et vous proposera de l'utiliser pour effectuer ses calculs.
+Dans ce cas, un nouveau fichier _ted.gpx résultant de la fusion d'avec le gpx source sera alors créé (remplacé).
+
 
 exemple de statistiques générées:	 
 ---------------------------------  
