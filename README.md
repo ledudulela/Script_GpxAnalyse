@@ -1,5 +1,6 @@
 # Script_GpxAnalyse
-màj: 19/11/2020   
+Doc màj: 22/11/2020   
+
 objectif: générer des statistiques à partir d'un fichier .gpx  
 
 ![screenshot](https://github.com/ledudulela/Script_GpxAnalyse/blob/main/gpxanalyse01.jpg)
@@ -8,6 +9,8 @@ objectif: générer des statistiques à partir d'un fichier .gpx
 
 ![screenshot](https://github.com/ledudulela/Script_GpxAnalyse/blob/main/gpxanalyse03.jpg)
 
+Le script est téléchargeable ici: http://ledudulela.free.fr/public/scripts/GPX/  
+
 HowTo: Copier le fichier gpx dans le répertoire où se trouve le script. Lancer le script. Consulter les 3 fichiers générés.  
 
 Fichier.txt : statistiques globales (durée, vitesses, altitudes, distance)  
@@ -15,10 +18,10 @@ Fichier.txt : statistiques globales (durée, vitesses, altitudes, distance)
 Fichier.log : données gpx converties avec des unités de mesure usuelles (csv/tab)  
 
 Fichier.csv : données des points où la distance entre 2 points est > 0, ainsi que des données calculées pour traitements avec un logiciel de type tableur (Excel, LibreOffice, etc)  
-le fichier .csv contient deux champs calculés: "Height" et "VSi" exploitable avec les graphique "Excel 3D-Map"  
+Le fichier .csv contient deux champs calculés: "Height" et "VSi" exploitable avec les graphique "Excel 3D-Map"  
 - height: hauteur du point par rapport à l'altitude la plus basse du parcours  
 - VSi (expérimental):  Vertical Speed Indicator dont les valeurs sont: -1=aucun, 0=faible, 1=moyen, 2=important  
-association conseillée de couleurs au VSi: -1:vert, 0:jaune, 1:rouge, 2:violet  
+Association conseillée de couleurs au VSi: -1:vert, 0:jaune, 1:rouge, 2:violet  
  
 Altitudes corrigées : DEM (Digital Elevation Model) = MNA (modèle numérique d'altitude), de terrain ou de surface  
 --- TED (Terrain Elevation Data)   
