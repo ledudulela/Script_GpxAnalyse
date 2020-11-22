@@ -27,10 +27,10 @@ Altitudes corrigées : DEM (Digital Elevation Model) = MNA (modèle numérique d
 --- TED (Terrain Elevation Data)   
 En raison de l'imprécision des données d'altitudes des appareils enregistrant les données GPS en GPX, pour avoir des altitudes plus précises,  
 il est possible d'associer un fichier de données d'altitudes (DEM) en provenance du site www.gpsvisualizer.com/convert  
-Pour cela, dans le formulaire de convertion de gpsvisualizer,   
+Pour cela, dans le formulaire de conversion de gpsvisualizer,   
 - cocher Output Format = GPX  
 - sélectionner "Add DEM elevation data" = ODP1 - Western Europe     (ODP = https:data.opendataportal.at)  
-- uploader (téléverser) le fichier source GPX  
+- uploader (convert) le fichier source GPX  
 Renommer le fichier obtenu, comme le fichier source, mais en remplacant l'extension .gpx par _ted.gpx (Terrain Elevation Data) 
 Puis placer le fichier _ted.gpx dans le même répertoire que le fichier source.
 Le fichier obtenu par gpsvisualizer/convert perd les informations de vitesse du fichier gpx source. 
