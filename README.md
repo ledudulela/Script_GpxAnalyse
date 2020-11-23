@@ -92,4 +92,5 @@ exemple de contenu de fichier GPX généré par Osmand: (il peut exister des var
 ```  
 
 Excel 3D-Map  
-![screenshot](https://github.com/ledudulela/Script_GpxAnalyse/blob/main/gpxanalyse3d.jpg)  
+[![Alt text](https://github.com/ledudulela/Script_GpxAnalyse/blob/main/gpxanalyse3d.jpg)](http://ledudulela.free.fr/public/scripts/GPX/gpxanalyse_excel_3d-map.mp4)  
+
