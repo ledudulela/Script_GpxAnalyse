@@ -1,5 +1,5 @@
 # Script_GpxAnalyse
-Doc màj: 22/11/2020   
+Doc màj: 23/11/2020   
 
 objectif: générer des statistiques à partir d'un fichier .gpx  
 
@@ -40,7 +40,7 @@ Le script vous indiquera la présence du fichier _ted et vous proposera de l'uti
 Dans ce cas, un nouveau fichier _ted.gpx résultant de la fusion d'avec le gpx source sera alors créé (remplacé).
 
 
-exemple de statistiques générées:	 
+Exemple de statistiques générées:	 
 ---------------------------------  
 Gpx-Filename=20201030_parcours_29km.gpx => nom du fichier gpx   
 
@@ -78,9 +78,10 @@ TotalAscent=457 m => cumul des montées
 
 TotalDescent=462 m => cumul descentes  
 
+Exemple de contenu de fichier GPX généré par Osmand:
+----------------------------------------------------
+(il peut exister des variantes selon l'origine du GPX, en particulier pour le champ "speed")
 ```  
-exemple de contenu de fichier GPX généré par Osmand: (il peut exister des variantes selon l'origine du GPX, en particulier pour le champ "speed" )  
-----------------------------------------------------  
 <trkpt lat="44.0" lon="-0.5">  
  <ele>18.9</ele>  
  <time>2020-09-29T15:47:54Z</time>  
@@ -91,6 +92,8 @@ exemple de contenu de fichier GPX généré par Osmand: (il peut exister des var
 </trkpt>  
 ```  
 
-Excel 3D-Map (cliquez sur l'image pour voir la vidéo dans le navigateur)  
+Excel 3D-Map:
+----------------------------------------------------
+(cliquez sur l'image pour voir la vidéo dans le navigateur)
 [![Excel_3D-Map](https://github.com/ledudulela/Script_GpxAnalyse/blob/main/gpxanalyse3d.jpg)](http://ledudulela.free.fr/public/scripts/GPX/gpxanalyse_excel_3d-map.mp4)  
 
