@@ -89,4 +89,7 @@ exemple de contenu de fichier GPX généré par Osmand: (il peut exister des var
    <speed>0.324</speed>  
  </extensions>  
 </trkpt>  
-```
+```  
+
+Excel 3D-Map  
+![screenshot](https://github.com/ledudulela/Script_GpxAnalyse/blob/main/gpxanalyse3d.jpg)  
