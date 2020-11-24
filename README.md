@@ -95,5 +95,5 @@ Exemple de contenu de fichier GPX généré par Osmand:
 Excel 3D-Map:
 ----------------------------------------------------
 (cliquez sur l'image pour voir la vidéo dans le navigateur)
-[![Excel_3D-Map](https://github.com/ledudulela/Script_GpxAnalyse/blob/main/gpxanalyse3d.jpg)](http://ledudulela.free.fr/public/scripts/GPX/gpxanalyse_excel_3d-map.mp4)  
+[![Excel_3D-Map](https://github.com/ledudulela/Script_GpxAnalyse/blob/main/gpxanalyse3d.jpg)](http://ledudulela.free.fr/public/scripts/GPX/video/gpxanalyse_excel_3d-map.mp4)  
 
